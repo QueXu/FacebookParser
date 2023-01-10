@@ -14,30 +14,32 @@ class FacebookParser
     config.default_driver = :selenium
   end
 
+  attr_reader :login, :password, :page, :driver
+
   def set_user(login, password)
     @login = login
     @password = password
   end
 
-  def login
-    @browser = Capybara.current_session
-    @driver = @browser.driver.browser
-    @browser.visit 'https://www.facebook.com'
-    @browser.find_field('Email or phone number').send_keys(@login)
-    @browser.find_field('Password').send_keys(@password)
-    @browser.find_button('Log In').click
+  def log_in
+    @page = Capybara.current_session
+    @driver = @page.driver.browser
+    @page.visit 'https://www.facebook.com'
+    @page.find_field('Email or phone number').send_keys(@login)
+    @page.find_field('Password').send_keys(@password)
+    @page.find_button('Log In').click
   end
 
   def get_friends
     result = []
-    @browser.visit 'https://www.facebook.com/friends/list'
-    sleep unless @browser.has_content?("Select people's names to preview their profile.")
+    @page.visit 'https://www.facebook.com/friends/list'
+    sleep unless @page.has_content?("Select people's names to preview their profile.")
     doc = Nokogiri::HTML(@driver.page_source)
     content = doc.css("span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x10flsy6.x6prxxf.xvq8zen.x1s688f.xzsf02u")
 
     content.each do |node|
       result << node.text   
     end
-    return result  
+    result  
   end
 end
