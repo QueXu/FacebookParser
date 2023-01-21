@@ -27,9 +27,9 @@ RSpec.describe FacebookParser do
 
 	context "logging in" do
 		it "should log in" do
-			@test.set_user('abobchyk@gmail.com', 'aboba322')
+			@test.set_user('debikartur@proton.me', 'debik322')
 			@test.log_in
-			expect(@test.page).not_to have_current_path("https://www.facebook.com")
+			expect(@test.page).to have_content("Artur Debik")
 		end
 
 		it "with wrong data" do
@@ -43,7 +43,13 @@ RSpec.describe FacebookParser do
 		it "shold return friends list" do
 			@test.set_user('abobchyk@gmail.com', 'aboba322')
 			@test.log_in
-			expect(@test.get_friends).not_to be_empty
+			expect(@test.get_friends).to include "Chan Jock Chan"
+		end
+
+		it "shold return empty list" do
+			@test.set_user('debikartur@proton.me', 'debik322')
+			@test.log_in
+			expect(@test.get_friends).to be_empty
 		end
 	end
 end

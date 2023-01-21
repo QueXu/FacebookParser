@@ -1,9 +1,12 @@
 require 'selenium-webdriver'
 require 'nokogiri'
 require 'capybara'
-require 'pry'
+require 'headless'
 
 class FacebookParser
+
+  headless = Headless.new
+  headless.start
 
   Capybara.register_driver :chrome do |app|  
     Capybara::Selenium::Driver.new(app, browser: :chrome)
@@ -31,15 +34,9 @@ class FacebookParser
   end
 
   def get_friends
-    result = []
     @page.visit 'https://www.facebook.com/friends/list'
-    sleep unless @page.has_content?("Select people's names to preview their profile.")
-    doc = Nokogiri::HTML(@driver.page_source)
-    content = doc.css("span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x10flsy6.x6prxxf.xvq8zen.x1s688f.xzsf02u")
-
-    content.each do |node|
-      result << node.text   
-    end
-    result  
+    sleep unless @page.has_content?("All friends")
+    page.find_all('div[aria-label="All friends"]').first.find_all('a').map(&:text).slice(2..) 
+    # we need .slice(2..) because it has some additional links in that <div>
   end
 end
