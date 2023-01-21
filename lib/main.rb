@@ -1,5 +1,4 @@
 require 'selenium-webdriver'
-require 'nokogiri'
 require 'capybara'
 require 'headless'
 
@@ -36,7 +35,7 @@ class FacebookParser
   def get_friends
     @page.visit 'https://www.facebook.com/friends/list'
     sleep unless @page.has_content?("All friends")
-    page.find_all('div[aria-label="All friends"]').first.find_all('a').map(&:text).slice(2..) 
+    @page.find_all('div[aria-label="All friends"]').first.find_all('a').map(&:text).slice(2..) 
     # we need .slice(2..) because it has some additional links in that <div>
   end
 end
